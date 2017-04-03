@@ -1,6 +1,7 @@
 package gobbs
 
 import (
+	"encoding/xml"
 	"io/ioutil"
 	"log"
 	"os"
