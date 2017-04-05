@@ -20,6 +20,7 @@ var (
 )
 
 type Conf struct {
+	Host    string `xml:"server_host"`
 	Port    int64  `xml:"server_port"`
 	AppName string `xml:"app_name"`
 	RunMode string `xml:"run_mode"`
@@ -58,6 +59,7 @@ func init() {
 
 func newConf() *Conf {
 	return &Conf{
+		Host:    "127.0.0.1",
 		Port:    8080,
 		AppName: "xiaochuan",
 		RunMode: DEV,
