@@ -1,20 +1,17 @@
 package gobbs
 
 import (
-	"net/http"
 	"strings"
 )
 
 //控制器 构造体
 type Controller struct {
 	Ctx            *ctx
-	controllerName string //控制器名称
-	actionName     string //方法名称
-	method         string //请求方式
-}
-type ctx struct {
-	writer  http.ResponseWriter //http 回应写入
-	request *http.Request       //http 请求
+	controllerName string                 //控制器名称
+	actionName     string                 //方法名称
+	method         string                 //请求方式
+	Data           map[string]interface{} //控制器数据
+	TplName        string                 //视图目录
 }
 
 //控制器接口
@@ -35,5 +32,5 @@ func (this *Controller) Init(c *ctx, controllerName, actionName string) {
 
 //向页面写入 字符串
 func (this *Controller) WriterString(msg string) {
-	this.Ctx.writer.Write([]byte(msg))
+	this.Ctx.Echo(msg)
 }
