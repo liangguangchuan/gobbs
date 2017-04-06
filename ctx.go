@@ -1,6 +1,8 @@
 package gobbs
 
 import (
+	"encoding/json"
+
 	"net/http"
 )
 
@@ -9,10 +11,47 @@ type ctx struct {
 	request *http.Request       //http 请求
 }
 
-func (this *ctx) Header(key, val string) {
+//设置header
+func (this *ctx) SetHeader(key, val string) {
 	this.writer.Header().Set(key, val)
 }
 
-func (this *ctx) Echo(result string) {
-	this.writer.Write([]byte(result))
+//获取header
+func (this *ctx) GetHeader(key string) {
+	this.request.Header.Get(key)
+}
+
+//输出
+func (this *ctx) Echo(result string) error {
+	_, err := this.writer.Write([]byte(result))
+	return err
+}
+
+//json处理 是否缩进格式化输出
+func (this *ctx) JSON(data interface{}, hasIndent bool) {
+	this.SetHeader("Content-Type", "application/json; charset=utf-8")
+	var content []byte
+	var err error
+	if hasIndent {
+		content, err = json.MarshalIndent(data, "", "  ")
+	} else {
+		content, err = json.Marshal(data)
+	}
+	if err != nil {
+		this.EchoError(err)
+		return
+	}
+
+	err = this.Echo(string(content))
+
+	if err != nil {
+		this.EchoError(err)
+	}
+}
+
+//错误输出
+func (this *ctx) EchoError(err error) {
+
+	http.Error(this.writer, err.Error(), http.StatusInternalServerError)
+
 }

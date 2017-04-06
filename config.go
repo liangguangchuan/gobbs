@@ -35,12 +35,12 @@ func init() {
 	var err error
 	//获取当前运行的 路径 如果获取失败抛出错误
 	if AppPath, err = filepath.Abs(filepath.Dir(os.Args[0])); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	//获取工作目录
 	workPath, err := os.Getwd()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	//拼接 conf 路径
 	confPath := filepath.Join(workPath, "conf", "conf.xml")
@@ -54,10 +54,9 @@ func init() {
 	}
 	//读取文件并赋值 conf
 	if err = parseConfig(confPath); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	//打印配置文件 数据
-	log.Println("conf content", BConf)
+
 }
 
 func newConf() *Conf {

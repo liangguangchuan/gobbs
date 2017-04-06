@@ -9,10 +9,9 @@ import (
 const (
 	// 版本
 	VERSION = "1.0"
-
-	// DEV is for develop
+	// 测试环境
 	DEV = "dev"
-	// PROD is for production
+	// 生产环境
 	PROD = "prod"
 )
 
@@ -24,7 +23,7 @@ func init() {
 	BApp = NewBApp()
 }
 
-//创建构造体
+//创建App构造体
 func NewBApp() *App {
 	return &App{
 		handle: &ControllerRegister{
