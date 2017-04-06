@@ -17,20 +17,23 @@ const (
 )
 
 var (
-	BApp *Controller
+	BApp *App
 )
 
 func init() {
 	BApp = NewBApp()
 }
 
-func NewBApp() *Controller {
-	return &Controller{
+//创建构造体
+func NewBApp() *App {
+	return &App{
 		handle: &ControllerRegister{
 			Router: make(map[string]*ControllerInfo),
 		},
 	}
 }
+
+//启动框架
 func Run() {
 	var (
 		server_listen string = ""
@@ -41,10 +44,13 @@ func Run() {
 	}
 	log.Println("server listn :", server_listen)
 	err = http.ListenAndServe(server_listen, Controller{})
+	//如果监听出现问题 输出错误终止运行
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 }
+
+//添加路由
 func AddRoute(url, FuncName string, c ControllerInterface) {
 	BApp.handle.Add(url, FuncName, c)
 }

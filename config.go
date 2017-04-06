@@ -24,6 +24,9 @@ type Conf struct {
 	Port    int64  `xml:"server_port"`
 	AppName string `xml:"app_name"`
 	RunMode string `xml:"run_mode"`
+
+	TplPATH string `xml:tpl_path`
+	TplExt  string `xml:tpl_ext`
 }
 
 func init() {
@@ -51,10 +54,10 @@ func init() {
 	}
 	//读取文件并赋值 conf
 	if err = parseConfig(confPath); err != nil {
-		panic(nil)
+		panic(err)
 	}
-	//输出 最终构造体值
-	log.Fatal(BConf)
+	//打印配置文件 数据
+	log.Println("conf content", BConf)
 }
 
 func newConf() *Conf {
@@ -63,17 +66,20 @@ func newConf() *Conf {
 		Port:    8080,
 		AppName: "xiaochuan",
 		RunMode: DEV,
+		TplPATH: "view",
+		TplExt:  "tpl",
 	}
 }
 
 //解析 conf.xml
 func parseConfig(confPath string) error {
-
+	//文件读取
 	fileData, err := ioutil.ReadFile(confPath)
 
 	if err != nil {
 		return err
 	}
 	err = xml.Unmarshal(fileData, BConf)
-	return err
+
+	return nil
 }
