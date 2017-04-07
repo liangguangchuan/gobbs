@@ -3,8 +3,11 @@ package gobbs
 import (
 	"log"
 	"net/http"
+	"path/filepath"
 	"reflect"
 	"strings"
+
+	"github.com/liangguangchuan/gobbs/lib"
 )
 
 //控制器信息
@@ -55,7 +58,7 @@ func (this Controller) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	if strings.Index(url, "/") != -1 {
 		url = strings.TrimLeft(url, "/")
 	}
-	//查看是否配置对应路由 如果没有 页面404
+	//查看是否配置对应路由 如果没有 查找静态配置
 	if v, ok := BApp.handle.Router[url]; ok != false {
 		var param []reflect.Value
 		vc := reflect.New(v.controllerType)
@@ -70,7 +73,37 @@ func (this Controller) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		method := vc.MethodByName(v.funcName)
 		method.Call(param)
 	} else {
+
+		staticFilePro(w, req, url)
+	}
+
+}
+
+func staticFilePro(w http.ResponseWriter, req *http.Request, url_path string) {
+	var static_key, static_path string
+	path_split := strings.Split(url_path, "/")
+	static_key = path_split[0]
+	//如果不存在对应静态路由 抛出404
+	if route_path, ok := BConf.StaticDir[static_key]; ok == false {
 		http.Error(w, "not found page", 404)
+	} else {
+		//去掉开头的 /
+		url_path = strings.TrimLeft(url_path, "/")
+		//去掉第一个/ 前面的内容
+		file_path := strings.TrimLeft(url_path, static_key)
+		//生成文件路径
+		static_path = filepath.Join(WorkPath, route_path, file_path)
+		//如果为dir 输出404
+		if lib.IsDir(static_path) {
+			http.Error(w, "not found page", 404)
+			return
+		}
+		//打印路径
+		if BConf.RunMode == DEV {
+			log.Println(static_path)
+		}
+		//运行文件服务 如果不存在为 404 如果存在读取文件 并显示
+		http.ServeFile(w, req, static_path)
 	}
 
 }

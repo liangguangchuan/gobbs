@@ -13,3 +13,13 @@ func FileExists(name string) bool {
 	}
 	return true
 }
+
+//是否为文件夹
+func IsDir(path string) bool {
+	if f, err := os.Stat(path); err == nil {
+		if f.IsDir() {
+			return true
+		}
+	}
+	return false
+}

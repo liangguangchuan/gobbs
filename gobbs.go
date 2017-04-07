@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 )
 
 const (
@@ -53,6 +54,11 @@ func Run() {
 //添加路由
 func AddRoute(url, FuncName string, c ControllerInterface) {
 	BApp.handle.Add(url, FuncName, c)
+}
+
+//添加静态文件路径
+func AddStaticPath(url, path string) {
+	BConf.StaticDir[strings.Trim(url, "/")] = path
 }
 
 //获取配置

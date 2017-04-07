@@ -26,13 +26,18 @@ var (
 
 //配置构造体
 type Conf struct {
-	Host    string `xml:"server_host"` //运行域名
-	Port    int64  `xml:"server_port"` //运行端口
-	AppName string `xml:"app_name"`    //项目名称
-	RunMode string `xml:"run_mode"`    //运行模块
-	TplPATH string `xml:"tpl_path"`    //模板路径
-	TplExt  string `xml:"tpl_ext"`     //模板后缀
-	Db      confDB
+	Host      string            `xml:"server_host"` //运行域名
+	Port      int64             `xml:"server_port"` //运行端口
+	AppName   string            `xml:"app_name"`    //项目名称
+	RunMode   string            `xml:"run_mode"`    //运行模块
+	TplPATH   string            `xml:"tpl_path"`    //模板路径
+	TplExt    string            `xml:"tpl_ext"`     //模板后缀
+	StaticDir map[string]string `xml:"static_dir"`  //静态文件目录
+	Db        confDB            `xml:"db"`          //db 数据
+}
+
+//web 配置 主要用来配置 静态文件目录
+type WebConfig struct {
 }
 
 //db配置 可能直接使用第三方orm
@@ -89,13 +94,14 @@ func init() {
 //生产conf
 func newConf() *Conf {
 	return &Conf{
-		Host:    "127.0.0.1",
-		Port:    8080,
-		AppName: "xiaochuan",
-		RunMode: DEV,
-		TplPATH: "view",
-		TplExt:  "tpl",
-		Db:      confDB{},
+		Host:      "127.0.0.1",
+		Port:      8080,
+		AppName:   "xiaochuan",
+		RunMode:   DEV,
+		TplPATH:   "view",
+		TplExt:    "tpl",
+		StaticDir: map[string]string{"public": "public"},
+		Db:        confDB{},
 	}
 }
 
