@@ -46,8 +46,10 @@ func (this Controller) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	var url = req.URL.Path
 
 	httpc := &ctx{writer: w, request: req}
-
-	log.Println(req.URL.String())
+	//如果运行模式为 develop
+	if BConf.RunMode == DEV {
+		log.Println(req.URL.String())
+	}
 
 	//去掉左边 /
 	if strings.Index(url, "/") != -1 {

@@ -1,13 +1,10 @@
 package gobbs
 
 import (
-	"fmt"
+	"html/template"
 	"log"
 	"path/filepath"
-
 	"strings"
-
-	"github.com/liangguangchuan/gobbs/lib"
 )
 
 //控制器 构造体
@@ -73,7 +70,7 @@ func (this *Controller) Display(tplname ...string) {
 	//模板路径 模板名称 模板后缀
 	var tpl_path, tpl_filename, tpl_ext string
 	//读取配置文件 模板后缀
-	tpl_ext = fmt.Sprintf(".%s", BConf.TplExt)
+	tpl_ext = "." + BConf.TplExt
 	//如果存在 参数传递
 	if len(tplname) > 0 {
 		//如果存在传递后缀去掉对应后缀
@@ -81,7 +78,7 @@ func (this *Controller) Display(tplname ...string) {
 			tplname[0] = strings.TrimRight(tplname[0], tpl_ext)
 		}
 		//生成对应目录名称
-		tpl_filename = fmt.Sprintf("%s%s", tplname[0], tpl_ext)
+		tpl_filename = tplname[0] + tpl_ext
 		//如果存在 / 说明要跨目录调用对应view
 		if strings.Index(tplname[0], "/") == -1 {
 			tpl_path = filepath.Join(BConf.TplPATH, this.controllerName, tpl_filename)
@@ -90,11 +87,29 @@ func (this *Controller) Display(tplname ...string) {
 		}
 
 	} else {
-		tpl_filename = fmt.Sprintf("%s%s", this.actionName, tpl_ext)
+		tpl_filename = this.actionName + tpl_ext
 		tpl_path = filepath.Join(BConf.TplPATH, this.controllerName, tpl_filename)
 	}
+	//拼接工作目录生成最终 view路径
+	tpl_path = filepath.Join(WorkPath, tpl_path)
+	//执行模板文件
+	this.executeTemplatFile(tpl_filename, tpl_path)
 
-	if lib.FileExists(tpl_path) != true {
-		log.Fatal(fmt.Sprintf("`%s` is no exist", tpl_path))
+}
+
+//执行模板文件
+func (this *Controller) executeTemplatFile(tpl_name, tpl_path string) {
+	//new里面的参数 不能随便传递
+	//如果要操作文件必须与文件名同名 如果需要解析多个文件 new 值为第一个
+	tpl, err := template.New(tpl_name).ParseFiles(tpl_path)
+
+	if err != nil {
+		this.Ctx.RunError(err)
+		return
+	}
+	//模板渲染输出
+	err = tpl.Execute(this.Ctx.writer, this.Data)
+	if err != nil {
+		this.Ctx.RunError(err)
 	}
 }

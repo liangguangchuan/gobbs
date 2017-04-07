@@ -34,6 +34,7 @@ func NewBApp() *App {
 
 //启动框架
 func Run() {
+
 	var (
 		server_listen string = ""
 		err           error
@@ -52,4 +53,9 @@ func Run() {
 //添加路由
 func AddRoute(url, FuncName string, c ControllerInterface) {
 	BApp.handle.Add(url, FuncName, c)
+}
+
+//获取配置
+func GoBbsConf(key string) interface{} {
+	return BConf.getConf(key)
 }

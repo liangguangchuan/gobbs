@@ -2,7 +2,8 @@ package gobbs
 
 import (
 	"encoding/json"
-
+	"errors"
+	"log"
 	"net/http"
 )
 
@@ -56,7 +57,11 @@ func (this *ctx) Redirect(url string) {
 
 //错误输出
 func (this *ctx) EchoError(err error) {
-
 	http.Error(this.writer, err.Error(), http.StatusInternalServerError)
+}
 
+//运行错误输出 错误处理方式有待考虑
+func (this *ctx) RunError(err error) {
+	log.Println(err)
+	this.EchoError(errors.New("Page wrong"))
 }
