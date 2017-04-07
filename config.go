@@ -36,10 +36,6 @@ type Conf struct {
 	Db        confDB            `xml:"db"`          //db 数据
 }
 
-//web 配置 主要用来配置 静态文件目录
-type WebConfig struct {
-}
-
 //db配置 可能直接使用第三方orm
 type confDB struct {
 	Host     string //请求地址
