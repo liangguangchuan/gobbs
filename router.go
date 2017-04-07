@@ -63,7 +63,7 @@ func (this Controller) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			log.Fatal("controller is not ControllerInterface")
 		}
 		//调用初始化方法
-		execController.Init(httpc, v.funcName, v.controllerName)
+		execController.Init(httpc, v.controllerName, v.funcName)
 		//反射调用运行方法
 		method := vc.MethodByName(v.funcName)
 		method.Call(param)

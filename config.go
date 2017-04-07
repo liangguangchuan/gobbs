@@ -17,16 +17,26 @@ var (
 	AppPath string
 	//运行模式 dev prod
 	RunMode string
+	TplExt  = []string{"tpl", "html", "htm"}
 )
 
 type Conf struct {
-	Host    string `xml:"server_host"`
-	Port    int64  `xml:"server_port"`
-	AppName string `xml:"app_name"`
-	RunMode string `xml:"run_mode"`
+	Host    string `xml:"server_host"` //运行域名
+	Port    int64  `xml:"server_port"` //运行端口
+	AppName string `xml:"app_name"`    //项目名称
+	RunMode string `xml:"run_mode"`    //运行模块
 
-	TplPATH string `xml:tpl_path`
-	TplExt  string `xml:tpl_ext`
+	TplPATH string `xml:"tpl_path"` //模板路径
+	TplExt  string `xml:"tpl_ext"`  //模板后缀
+	Db      confDB
+}
+type confDB struct {
+	Host     string //请求地址
+	Port     int64  //端口
+	Username string //登录用户
+	Userpass string //登录密码
+	Datebase string //请求数据库
+	TablePre string //表前缀
 }
 
 func init() {
@@ -57,6 +67,13 @@ func init() {
 		log.Fatal(err)
 	}
 
+	if TplExtCheck(BConf.TplExt) == false {
+		log.Fatal("`tpl_ext` can only be html,htm,tpl")
+	}
+
+	if BConf.RunMode == DEV {
+		log.Println(BConf)
+	}
 }
 
 func newConf() *Conf {
@@ -67,6 +84,7 @@ func newConf() *Conf {
 		RunMode: DEV,
 		TplPATH: "view",
 		TplExt:  "tpl",
+		Db:      confDB{},
 	}
 }
 
@@ -78,7 +96,20 @@ func parseConfig(confPath string) error {
 	if err != nil {
 		return err
 	}
-	err = xml.Unmarshal(fileData, BConf)
 
-	return nil
+	err = xml.Unmarshal(fileData, BConf)
+	log.Println(err)
+	return err
+}
+
+//模板后缀检查
+func TplExtCheck(ext string) bool {
+
+	for _, v := range TplExt {
+
+		if ext == v {
+			return true
+		}
+	}
+	return false
 }

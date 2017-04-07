@@ -49,6 +49,11 @@ func (this *ctx) JSON(data interface{}, hasIndent bool) {
 	}
 }
 
+//页面跳转
+func (this *ctx) Redirect(url string) {
+	http.Redirect(this.writer, this.request, url, http.StatusFound)
+}
+
 //错误输出
 func (this *ctx) EchoError(err error) {
 
