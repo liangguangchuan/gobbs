@@ -119,11 +119,11 @@ func (this *Controller) GetInputString(key string) string {
 	//如果获取输入到的值为 nil 说明并没有传递 get参数
 	if get_value == nil {
 		return default_value
-		//如果获取到对应的key 返回对应key的值
-	} else if v, ok := get_value.Get(key); ok == true {
-		return v
+
+	} else {
+		return get_value.Get(key)
 	}
-	return default_value
+
 }
 
 //获取get 输入字符串
