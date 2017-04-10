@@ -3,6 +3,7 @@ package gobbs
 import (
 	"html/template"
 	"log"
+	"net/url"
 	"path/filepath"
 	"strings"
 )
@@ -112,4 +113,30 @@ func (this *Controller) executeTemplatFile(tpl_name, tpl_path string) {
 	if err != nil {
 		this.Ctx.RunError(err)
 	}
+}
+
+//获取get 输入字符串
+func (this *Controller) GetInputString(key string) []string {
+	var default_value []string
+	//获取输入
+	get_value := this.GetInput()
+	//如果获取输入到的值为 nil 说明并没有传递 get参数
+	if get_value == nil {
+		return default_value
+		//如果获取到对应的key 返回对应key的值
+	} else if v, ok := get_value[key]; ok == true {
+		return v
+	}
+
+	return default_value
+}
+
+//获取输入
+func (this *Controller) GetInput() url.Values {
+	//如果 资源输入为空 说明没有解析
+	if this.Ctx.request.Form == nil {
+		//解析URL中的查询字符串，并将解析结果更新到r.Form字段
+		this.Ctx.request.ParseForm()
+	}
+	return this.Ctx.request.Form
 }
