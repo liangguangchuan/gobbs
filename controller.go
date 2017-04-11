@@ -169,13 +169,13 @@ func (this *Controller) GetInputFile(file_key, save_path string, maxsize int64) 
 		return err
 	}
 	log.Printf("%T", handle_file)
-	//判断文件大小 os File
+	//判断文件大小 当handle_file 为 os File 类型
 	if statInterface, ok := handle_file.(Stat); ok {
 
 		fileInfo, _ := statInterface.Stat()
 		file_size = fileInfo.Size()
 	}
-	//判断文件大小 io SectionReader
+	//判断文件大小 当handle_file 为  io SectionReader 类型
 	if sizeInterface, ok := handle_file.(Size); ok {
 		file_size = sizeInterface.Size()
 	}
