@@ -1,9 +1,12 @@
 package gobbs
 
 import (
+	"errors"
 	"html/template"
+	"io"
 	"log"
 	"net/url"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -113,25 +116,26 @@ func (this *Controller) executeTemplatFile(tpl_name, tpl_path string) {
 		this.Ctx.RunError(err)
 	}
 }
+
+//获取输入字符串
 func (this *Controller) GetInputString(key string) string {
-	var default_value string = ""
+	var default_value string
 	get_value := this.GetInput()
-	//如果获取输入到的值为 nil 说明并没有传递 get参数
+	//如果获取输入到的值为 nil 说明并没有传递参数
 	if get_value == nil {
 		return default_value
-
 	} else {
 		return get_value.Get(key)
 	}
 
 }
 
-//获取get 输入字符串
+//获取输入字符串数组
 func (this *Controller) GetInputStrings(key string) []string {
 	var default_value []string
 	//获取输入
 	get_value := this.GetInput()
-	//如果获取输入到的值为 nil 说明并没有传递 get参数
+	//如果获取输入到的值为 nil 说明并没有传递参数
 	if get_value == nil {
 		return default_value
 		//如果获取到对应的key 返回对应key的值
@@ -140,6 +144,61 @@ func (this *Controller) GetInputStrings(key string) []string {
 	}
 
 	return default_value
+}
+
+// 获取文件大小的接口
+type Size interface {
+	Size() int64
+}
+
+// 获取文件信息的接口
+type Stat interface {
+	Stat() (os.FileInfo, error)
+}
+
+//获取上传文件  input key 要保存的路径 允许上传最大字节
+func (this *Controller) GetInputFile(file_key, save_path string, maxsize int64) error {
+	var (
+		save_file *os.File
+		file_size int64
+	)
+
+	handle_file, handle_info, err := this.Ctx.request.FormFile(file_key)
+
+	if err != nil {
+		return err
+	}
+	log.Printf("%T", handle_file)
+	//判断文件大小 os File
+	if statInterface, ok := handle_file.(Stat); ok {
+
+		fileInfo, _ := statInterface.Stat()
+		file_size = fileInfo.Size()
+	}
+	//判断文件大小 io SectionReader
+	if sizeInterface, ok := handle_file.(Size); ok {
+		file_size = sizeInterface.Size()
+	}
+	//判断 文件 上传大小
+	if file_size > maxsize {
+		return errors.New("upload file is too large")
+	}
+
+	//	创建文件 并赋值 644 权限
+	save_file, err = os.OpenFile(filepath.Join(save_path, handle_info.Filename), os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	//数据复制
+	_, err = io.Copy(save_file, handle_file)
+	if err != nil {
+		return err
+	}
+	defer save_file.Close()
+	defer handle_file.Close()
+
+	return err
+
 }
 
 //获取输入
