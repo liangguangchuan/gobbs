@@ -168,7 +168,7 @@ func (this *Controller) GetInputFile(file_key, save_path string, maxsize int64) 
 	if err != nil {
 		return err
 	}
-	log.Printf("%T", handle_file)
+
 	//判断文件大小 当handle_file 为 os File 类型
 	if statInterface, ok := handle_file.(Stat); ok {
 
@@ -194,6 +194,7 @@ func (this *Controller) GetInputFile(file_key, save_path string, maxsize int64) 
 	if err != nil {
 		return err
 	}
+	//关闭两个文件资源的 打开
 	defer save_file.Close()
 	defer handle_file.Close()
 
