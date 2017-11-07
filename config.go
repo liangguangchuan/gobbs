@@ -1,4 +1,4 @@
-package gobbs
+package goweb
 
 import (
 	"encoding/xml"
@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"reflect"
 
-	"github.com/liangguangchuan/gobbs/lib"
+	"github.com/liangguangchuan/goweb/lib"
 )
 
 var (

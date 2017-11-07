@@ -1,4 +1,4 @@
-package gobbs
+package goweb
 
 import (
 	"errors"
@@ -29,7 +29,7 @@ type ControllerInterface interface {
 
 //程序停止
 func (this *Controller) StopRun() {
-	log.Fatal("gobbs stop")
+	log.Fatal("goweb stop")
 }
 func (this *Controller) Get() {}
 

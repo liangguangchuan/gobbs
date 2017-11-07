@@ -1,4 +1,4 @@
-package gobbs
+package goweb
 
 type App struct {
 	handle *ControllerRegister

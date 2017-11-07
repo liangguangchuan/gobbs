@@ -1,4 +1,4 @@
-package gobbs
+package goweb
 
 import (
 	"encoding/json"

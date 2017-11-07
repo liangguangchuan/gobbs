@@ -1,4 +1,4 @@
-package gobbs
+package goweb
 
 import (
 	"fmt"
@@ -62,6 +62,6 @@ func AddStaticPath(url, path string) {
 }
 
 //获取配置
-func GoBbsConf(key string) interface{} {
+func GoWebConf(key string) interface{} {
 	return BConf.getConf(key)
 }

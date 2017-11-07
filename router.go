@@ -1,4 +1,4 @@
-package gobbs
+package goweb
 
 import (
 	"log"
@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/liangguangchuan/gobbs/lib"
+	"github.com/liangguangchuan/goweb/lib"
 )
 
 //控制器信息
